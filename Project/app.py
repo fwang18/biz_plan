@@ -1,4 +1,6 @@
 import os
+import random
+
 # We'll render HTML templates and access data sent by POST
 # using the request object from flask. Redirect and url_for
 # will be used to redirect the user once the upload is done
@@ -7,8 +9,13 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from werkzeug import secure_filename
 
-# Initialize the Flask application
+
 app = Flask(__name__)
+
+
+@app.route("/")
+def home():
+    return render_template('home.html')
 
 # This is the path to the upload directory
 app.config['UPLOAD_FOLDER'] = 'uploads/'
@@ -23,7 +30,7 @@ def allowed_file(filename):
 # This route will show a form to perform an AJAX request
 # jQuery is loaded to execute the request and update the
 # value of the operation
-@app.route('/')
+@app.route('/index')
 def index():
     return render_template('index.html')
 
@@ -45,9 +52,12 @@ def upload():
             # Save the filename into a list, we'll use it later
             filenames.append(filename)
             # Redirect the user to the uploaded_file route, which
-            # will basicaly show on the browser the uploaded file
+            # will basically show on the browser the uploaded file
+    # Show images in sorted order based on model results.
+    # To be replaced with model results later!.
+    sorted_files = random.sample(filenames, len(filenames))
     # Load an html page with a link to each uploaded file
-    return render_template('upload.html', filenames=filenames)
+    return render_template('upload.html', filenames=sorted_files)
 
 # This route is expecting a parameter containing the name
 # of a file. Then it will locate that file on the upload
@@ -55,12 +65,9 @@ def upload():
 # an image, that image is going to be show after the upload
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
 
-if __name__ == '__main__':
-    app.run(
-        host="0.0.0.0",
-        port=int("80"),
-        debug=True
-    )
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
