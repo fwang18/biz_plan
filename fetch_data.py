@@ -11,6 +11,12 @@ class DataFetcher(object):
 		self.flickr = flickrapi.FlickrAPI(api_key, api_secret)
 
 	def fetch(self, n=50, negative_sample_rate=None):
+		"""
+		Fetch and saved photos.
+		Input:
+			n: number of photos fetched.
+			negative_sample_rate: probability to keep a nagetive sample
+		"""
 		# 50 images per page
 		photos = self.flickr.walk(extras='url_m, count_faves', license='1,2,4,5',
 			per_page=500)
