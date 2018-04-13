@@ -1,5 +1,6 @@
-import psycopg2
 import datetime
+import psycopg2
+
 
 # Note that we may need to write different functions to
 # update different pieces of the record. I only give an
