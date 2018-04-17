@@ -28,15 +28,22 @@ body, html {
     <div class="w3-col s3">
       <a href="#" class="w3-button w3-block w3-black">HOME</a>
     </div>
-    <div class="w3-col s3">
-      <a href="#about" class="w3-button w3-block w3-black">ABOUT</a>
-    </div>
+    <!--<div class="w3-col s3">-->
+      <!--<a href="#about" class="w3-button w3-block w3-black">ABOUT</a>-->
+    <!--</div>-->
     <div class="w3-col s3">
       <a href="#demo" class="w3-button w3-block w3-black">DEMO</a>
     </div>
     <div class="w3-col s3">
-      <a href="#contact" class="w3-button w3-block w3-black">CONTACT US</a>
+      <a href="/contact" class="w3-button w3-block w3-black">CONTACT US</a>
     </div>
+    <div class="w3-col s3">
+      <a href="/login" class="w3-button w3-block w3-black">LOGIN/SIGN UP</a>
+    </div>
+    <!--<div class="w3-col s3">-->
+      <!--<a href="/signup" class="w3-button w3-block w3-black">SIGN UP</a>-->
+    <!--</div>-->
+
   </div>
 </div>
 
@@ -137,7 +144,11 @@ body, html {
 
     <h5 class="w3-center w3-padding-48"><span class="w3-tag w3-wide">DEMO/STEPS</span></h5>
     <p>Here how it works</p>
-    <div id="googleMap" class="w3-sepia" style="width:100%;height:400px;"></div>
+    <!--<div id="googleMap" class="w3-sepia" style="width:100%;height:400px;"></div>-->
+
+<video controls="controls" width="800" height="600"
+       name="login_0416" src="{{ url_for('static', filename = 'login_0416.mov')}}"></video>
+
     <p><span class="w3-tag">Step 1</span> Upload up to 5 photos.</p>
     <p><span class="w3-tag">Step 2</span> Submit.</p>
     <p><span class="w3-tag">Step 3</span> Results.</p>
@@ -154,7 +165,7 @@ body, html {
       <!--<p><button class="w3-button w3-black" type="submit">START UPLOAD</button></p>-->
     <!--</form>-->
       <div class="w3-col s3">
-      <a href="/index" class="w3-button w3-block w3-black">START UPLOAD</a>
+      <a href="/login" class="w3-button w3-block w3-black">START UPLOAD</a>
       </div>
 
   </div>
@@ -165,67 +176,25 @@ body, html {
 
 
 
-<!-- Add Google Maps -->
-<script>
-function myMap()
-{
-  myCenter=new google.maps.LatLng(41.878114, -87.629798);
-  var mapOptions= {
-    center:myCenter,
-    zoom:12, scrollwheel: false, draggable: false,
-    mapTypeId:google.maps.MapTypeId.ROADMAP
-  };
-  var map=new google.maps.Map(document.getElementById("googleMap"),mapOptions);
 
-  var marker = new google.maps.Marker({
-    position: myCenter,
-  });
-  marker.setMap(map);
-}
+<!--&lt;!&ndash; About Container &ndash;&gt;-->
+<!--<div class="w3-container" id="contact">-->
+  <!--<div class="w3-content" style="max-width:700px">-->
+    <!--<h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">CONTACT US</span></h5>-->
+    <!--<p>Team member</p>-->
+    <!--<p>Contact Info</p>-->
 
-// Tabbed Menu
-function openMenu(evt, menuName) {
-  var i, x, tablinks;
-  x = document.getElementsByClassName("menu");
-  for (i = 0; i < x.length; i++) {
-     x[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablink");
-  for (i = 0; i < x.length; i++) {
-     tablinks[i].className = tablinks[i].className.replace(" w3-dark-grey", "");
-  }
-  document.getElementById(menuName).style.display = "block";
-  evt.currentTarget.firstElementChild.className += " w3-dark-grey";
-}
-document.getElementById("myLink").click();
-</script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu-916DdpKAjTmJNIgngS6HL_kDIKU0aU&callback=myMap"></script>
-<!--
-To use this code on your website, get a free API key from Google.
-Read more at: https://www.w3schools.com/graphics/google_maps_basic.asp
--->
+    <!--&lt;!&ndash;<div class="w3-panel w3-leftbar w3-light-grey">&ndash;&gt;-->
+      <!--&lt;!&ndash;<p><i>"Add quote here" think slogan.</i></p>&ndash;&gt;-->
+      <!--&lt;!&ndash;<p>Author of the quote</p>&ndash;&gt;-->
+    <!--&lt;!&ndash;</div>&ndash;&gt;-->
 
+    <!--<img src="{{ url_for('static', filename = 'fuchouzhe.png') }}" style="width:100%;max-width:1000px" class="w3-margin-top">-->
 
-
-
-<!-- About Container -->
-<div class="w3-container" id="contact">
-  <div class="w3-content" style="max-width:700px">
-    <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">CONTACT US</span></h5>
-    <p>Team member</p>
-    <p>Contact Info</p>
-
-    <!--<div class="w3-panel w3-leftbar w3-light-grey">-->
-      <!--<p><i>"Add quote here" think slogan.</i></p>-->
-      <!--<p>Author of the quote</p>-->
-    <!--</div>-->
-
-    <img src="{{ url_for('static', filename = 'fuchouzhe.png') }}" style="width:100%;max-width:1000px" class="w3-margin-top">
-
-    <!--<p><strong>Opening hours:</strong> everyday from 6am to 5pm.</p>-->
-    <!--<p><strong>Address:</strong> 15 Adr street, 5015, NY</p>-->
-  </div>
-</div>
+    <!--&lt;!&ndash;<p><strong>Opening hours:</strong> everyday from 6am to 5pm.</p>&ndash;&gt;-->
+    <!--&lt;!&ndash;<p><strong>Address:</strong> 15 Adr street, 5015, NY</p>&ndash;&gt;-->
+  <!--</div>-->
+<!--</div>-->
 
 
 <!-- Footer -->
