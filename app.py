@@ -192,8 +192,4 @@ if __name__ == "__main__":
     app.secret_key = os.urandom(24)
     db.create_all()
     db.session.commit()
-    app.run(
-        host="0.0.0.0",
-        port=int("80"),
-        debug=True
-        )
+    app.run(host="0.0.0.0", port=8080, debug=True)
