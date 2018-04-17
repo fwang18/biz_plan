@@ -10,6 +10,8 @@ from flask import Flask, render_template, request, \
     redirect, url_for, send_from_directory
 from werkzeug import secure_filename
 
+from predict import ImagePredictor
+
 
 app = Flask(__name__)
 
@@ -78,7 +80,9 @@ def upload():
             # will basically show on the browser the uploaded file
     # Show images in sorted order based on model results.
     # To be replaced with model results later!.
-    sorted_files = random.sample(filenames, len(filenames))
+    # sorted_files = random.sample(filenames, len(filenames))
+    m = ImagePredictor('model/cnn_model.pt')
+    sorted_files = list(np.array(filenames)[m.rank(filenames)])
     # Load an html page with a link to each uploaded file
     return render_template('dashboard_results.html', filenames=sorted_files, name=current_user.username)
 
