@@ -67,6 +67,9 @@ def upload():
     # Get the name of the uploaded files
     uploaded_files = request.files.getlist("file[]")
     filenames = []
+    if len(uploaded_files) > 5:
+        return render_template('dashboard_upload.html', name=current_user.username, error=1)
+
     for file in uploaded_files:
         # Check if the file is one of the allowed types/extensions
         if file and allowed_file(file.filename):
@@ -156,7 +159,7 @@ def login():
             return redirect(url_for('index'))
 
         else:
-            return render_template('login_error.html', form=form)
+            return render_template('login.html', form=form, error=1)
 
     return render_template('login.html', form=form)
 
@@ -167,7 +170,7 @@ def signup():
     user_count = User.query.filter_by(username=form.username.data).count()
     if (user_count > 0):
         form = RegisterForm()
-        return render_template('signup_error.html', form=form)
+        return render_template('signup.html', form=form, error=1)
 
     elif form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
