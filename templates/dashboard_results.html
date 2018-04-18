@@ -19,7 +19,7 @@ Dashboard
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Project name</a>
+          <a class="navbar-brand" href="#">PICTURESQUE.AI</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -58,31 +58,35 @@ Dashboard
             <!--<li><a href="">Another nav item</a></li>-->
           <!--</ul>-->
         <!--</div>-->
+        <div class="container">
+                     <p></p>
+            <p></p>
+            <p></p>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Welcome, {{ name }}</h1>
+          <h1 class="page-header">Congratulations, {{ name }}!</h1>
 
-<div class="container">
-      <div class="header">
-        <h3 class="text-muted">Uploaded files</h3>
-      </div>
+
+            <div class="container">
+      <!--<div class="header">-->
+        <h3 class="text-muted">Our AI ranked photos for you!</h3>
+            </div>
       <hr>
       <div>
-      This is a list of the files you just uploaded, click on them to load/download them
+    
       <ul>
               <div class="row placeholders">
         {% for file in files %}
-
-          <li><a href="{{url_for('uploaded_file', filename=file)}}">{{file}}</a></li>
-
-              <div class="col-xs-6 col-sm-3 placeholder">
+          <div class="col-xs-6 col-sm-3 placeholder">
+              <li><a href="{{url_for('uploaded_file', filename=file)}}">{{file}}</a></li>
               <img src="{{url_for('uploaded_file', filename=file)}}" style="width:128px;height:128px;" width="128" height="128" class="img-responsive"           alt="Generic placeholder thumbnail">
-              <h4>Label</h4>
+              <h4>Hot </h4>
               <!--<span class="text-muted">Something else</span>-->
-              </div>
+          </div>
 
           <!--<img src="{{url_for('uploaded_file', filename=file)}}" style="width:128px;height:128px;">-->
         {% endfor %}
                </div>
+      <p>*This is a list of the files you just uploaded, we rank them based on predicted popularity</p>
       </ul>
       </div>
       </hr>

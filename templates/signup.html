@@ -79,6 +79,9 @@ Sign Up
     {{ wtf.form_field(form.username) }}
     {{ wtf.form_field(form.email) }}
     {{ wtf.form_field(form.password) }}
+    {% if error==1 %}
+    <p> Error - Existing user name </p>
+    {% endif %}
     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button>
   </form>
 
