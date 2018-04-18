@@ -70,7 +70,8 @@ Dashboard
       This is a list of the files you just uploaded, click on them to load/download them
       <ul>
               <div class="row placeholders">
-        {% for file in filenames %}
+        {% for file in files %}
+
           <li><a href="{{url_for('uploaded_file', filename=file)}}">{{file}}</a></li>
 
               <div class="col-xs-6 col-sm-3 placeholder">

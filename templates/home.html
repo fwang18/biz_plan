@@ -37,9 +37,17 @@ body, html {
     <div class="w3-col s3">
       <a href="/contact" class="w3-button w3-block w3-black">CONTACT US</a>
     </div>
+      {% if session['logged_in'] == True %}
+            <div class="w3-col s3">
+      <a href="/logout" class="w3-button w3-block w3-black">LOGOUT</a>
+    </div>
+
+      {% else %}
     <div class="w3-col s3">
       <a href="/login" class="w3-button w3-block w3-black">LOGIN/SIGN UP</a>
     </div>
+      {% endif %}
+
     <!--<div class="w3-col s3">-->
       <!--<a href="/signup" class="w3-button w3-block w3-black">SIGN UP</a>-->
     <!--</div>-->
@@ -165,7 +173,12 @@ body, html {
       <!--<p><button class="w3-button w3-black" type="submit">START UPLOAD</button></p>-->
     <!--</form>-->
       <div class="w3-col s3">
+          {% if session['logged_in'] == True %}
+      <a href="/index" class="w3-button w3-block w3-black">START UPLOAD</a>
+          {% else %}
       <a href="/login" class="w3-button w3-block w3-black">START UPLOAD</a>
+
+          {% endif %}
       </div>
 
   </div>
