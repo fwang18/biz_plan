@@ -1,5 +1,6 @@
 import os
 import random
+import numpy as np
 
 # We'll render HTML templates and access data sent by POST
 # using the request object from flask. Redirect and url_for
@@ -75,7 +76,7 @@ def upload():
             # folder we setup
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             # Save the filename into a list, we'll use it later
-            filenames.append(filename)
+            filenames.append(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             # Redirect the user to the uploaded_file route, which
             # will basically show on the browser the uploaded file
     # Show images in sorted order based on model results.
@@ -83,8 +84,9 @@ def upload():
     # sorted_files = random.sample(filenames, len(filenames))
     m = ImagePredictor('model/cnn_model.pt')
     sorted_files = list(np.array(filenames)[m.rank(filenames)])
+    files = [f.split('/')[1] for f in sorted_files]
     # Load an html page with a link to each uploaded file
-    return render_template('dashboard_results.html', filenames=sorted_files, name=current_user.username)
+    return render_template('dashboard_results.html', filenames=sorted_files, name=current_user.username, files=files)
 
 
 @app.route('/uploads/<filename>')
@@ -101,7 +103,7 @@ def uploaded_file(filename):
 
 
 ###login start
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, session
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
@@ -132,8 +134,8 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 class LoginForm(FlaskForm):
-    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
-    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+    username = StringField('username', validators=[InputRequired()])
+    password = PasswordField('password', validators=[InputRequired()])
     remember = BooleanField('remember me')
 
 class RegisterForm(FlaskForm):
@@ -150,6 +152,7 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user is not None and check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
+            session['logged_in'] = True
             return redirect(url_for('index'))
 
         else:
@@ -185,6 +188,7 @@ def dashboard():
 @login_required
 def logout():
     logout_user()
+    session['logged_in'] = False
     return render_template('home.html')
 ###login end
 
