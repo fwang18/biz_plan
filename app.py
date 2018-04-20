@@ -95,8 +95,13 @@ def upload():
             # Save the filename into a list, we'll use it later
             filenames.append(os.path.join(app.config['UPLOAD_FOLDER'],
                                           filename))
-            # Redirect the user to the uploaded_file route, which
-            # will basically show on the browser the uploaded file
+        # Throw an error for images with improper extension.
+        if allowed_file(file.filename) is False:
+                return render_template('dashboard_upload.html',
+                                       name=current_user.username,
+                                       error=2, wrongfile=file.filename)
+    # Redirect the user to the uploaded_file route, which
+    # will basically show on the browser the uploaded file
     # Show images in sorted order based on model results.
     m = ImagePredictor('model/cnn_model.pt')
     sorted_files = list(np.array(filenames)[m.rank(filenames)])

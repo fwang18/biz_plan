@@ -85,6 +85,10 @@ Dashboard
           {% if error==1 %}
           <p>Oops! Please upload up to 5 photos.</p>
           {% endif %}
+          {% if error==2 %}
+          <p>Oops! Please upload 'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif' image.</p>
+          <p>"{{wrongfile}}" has improper extension.</p>
+          {% endif %}
       </div>
     </div>
 
