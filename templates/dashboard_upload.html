@@ -38,7 +38,7 @@ h1,h2,h3,h4,h5,h6 {
       <form action="upload" method="post" enctype="multipart/form-data">
         <input type="file" multiple="" name="file[]" id="gallery-photo-add" class="span3" />
         <input type="submit" value="Upload and Evaluate"  class="span2">
-        <div class="gallery" style="margin: 30px 30px 30px 30px"></div>
+        <div class="gallery" id = "show" style="margin: 30px 30px 30px 30px"></div>
       </form>
         {% if error==1 %}
         <p>Oops! Please upload up to 5 photos.</p>
@@ -55,22 +55,26 @@ h1,h2,h3,h4,h5,h6 {
 $(function() {
     // Multiple images preview in browser
     var imagesPreview = function(input, placeToInsertImagePreview) {
-
+        document.getElementById("show").innerHTML = " "
         if (input.files) {
             var filesAmount = input.files.length;
+            
+            if (filesAmount <= 5){
+                for (i = 0; i < filesAmount; i++) {
+                    var reader = new FileReader();
 
-            for (i = 0; i < filesAmount; i++) {
-                var reader = new FileReader();
+                    reader.onload = function(event) {
+                        $($.parseHTML('<img>')).attr({'src':event.target.result,'height': '180px'}).appendTo(placeToInsertImagePreview);
+                    }
 
-                reader.onload = function(event) {
-                    $($.parseHTML('<img>')).attr({'src':event.target.result,'height': '180px'}).appendTo(placeToInsertImagePreview);
+                reader.readAsDataURL(input.files[i]);}
+            }else { 
+                    document.getElementById("show").innerHTML = "<span style='color:#FF0000'> Max 5 Files Allowed！ </span>";
                 }
-
-                reader.readAsDataURL(input.files[i]);
             }
-        }
 
-    };
+            
+        };
 
     $('#gallery-photo-add').on('change', function() {
         imagesPreview(this, 'div.gallery');
