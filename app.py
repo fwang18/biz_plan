@@ -161,9 +161,9 @@ class RegisterForm(FlaskForm):
     email = StringField('email', validators=[InputRequired(),
                                              Email(message='Invalid email'),
                                              Length(max=50)])
-    username = StringField('username', validators=[InputRequired(),
+    username = StringField('username', validators=[InputRequired(message='Username Required'),
                                                    Length(min=4, max=15)])
-    password = PasswordField('password', validators=[InputRequired(),
+    password = PasswordField('password', validators=[InputRequired(message='Password Required'),
                                                      Length(min=8, max=80)])
 
 
@@ -184,7 +184,7 @@ def login():
             return redirect(url_for('index'))
         # Throw error if user hasn't signed up or input wrong password.
         else:
-            return render_template('login.html', form=form, error=1)
+            return render_template('login.html', form=form, message = "Invalid Username or Password")
 
     return render_template('login.html', form=form)
 
@@ -200,7 +200,7 @@ def signup():
     # Throw warning message for existing users.
     if (user_count > 0):
         form = RegisterForm()
-        return render_template('signup.html', form=form, error=1)
+        return render_template('signup.html', form=form, message = "Username Already Exist")
     # Create sign up form for uses to fill.
     elif form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data,
