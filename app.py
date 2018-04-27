@@ -45,6 +45,16 @@ def contact():
     return render_template('contact.html')
 
 
+@app.route("/profile")
+def profile():
+    """
+    This function is to render User Profile HTML
+    """
+    # Hard code for now. Need to revise once connecting to database.
+    return render_template('user_profile.html', name=current_user.username,
+                           email=current_user.email, plan=0, free=3)
+
+
 # This is the path to the upload directory
 app.config['UPLOAD_FOLDER'] = 'uploads/'
 # These are the extension that we are accepting to be uploaded
@@ -161,10 +171,12 @@ class RegisterForm(FlaskForm):
     email = StringField('email', validators=[InputRequired(),
                                              Email(message='Invalid email'),
                                              Length(max=50)])
-    username = StringField('username', validators=[InputRequired(message='Username Required'),
-                                                   Length(min=4, max=15)])
-    password = PasswordField('password', validators=[InputRequired(message='Password Required'),
-                                                     Length(min=8, max=80)])
+    username = StringField('username', validators=[
+        InputRequired(message='Username Required'),
+        Length(min=4, max=15)])
+    password = PasswordField('password', validators=[
+        InputRequired(message='Password Required'),
+        Length(min=8, max=80)])
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -184,7 +196,9 @@ def login():
             return redirect(url_for('index'))
         # Throw error if user hasn't signed up or input wrong password.
         else:
-            return render_template('login.html', form=form, message = "Invalid Username or Password")
+            return render_template('login.html',
+                                   form=form,
+                                   message="Invalid Username or Password")
 
     return render_template('login.html', form=form)
 
@@ -200,7 +214,9 @@ def signup():
     # Throw warning message for existing users.
     if (user_count > 0):
         form = RegisterForm()
-        return render_template('signup.html', form=form, message = "Username Already Exist")
+        return render_template('signup.html',
+                               form=form,
+                               message="Username Already Exist")
     # Create sign up form for uses to fill.
     elif form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data,
@@ -212,6 +228,30 @@ def signup():
         return redirect(url_for('login'))
 
     return render_template('signup.html', form=form)
+
+
+# Create user payment form.
+class PaymentForm(FlaskForm):
+    name = StringField('Name', validators=[InputRequired()])
+    credit_num = StringField('Credit card number',
+                             validators=[InputRequired(),
+                                         Length(min=16, max=16)])
+    exp_date = StringField('Expiration date',
+                           validators=[InputRequired(), Length(4)])
+    sec_code = StringField('Security code',
+                           validators=[InputRequired(), Length(3)])
+
+
+@app.route("/upgrade")
+def upgrade():
+    """
+    This function is to render Upgrade HTML
+    Allowing user to provide payment info
+    """
+    form = PaymentForm()
+    return render_template('upgrade.html',
+                           name=current_user.username,
+                           email=current_user.email, form=form)
 
 
 @app.route('/logout')
