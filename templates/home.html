@@ -31,21 +31,26 @@ body, html {
     <!--<div class="w3-col s3">-->
       <!--<a href="#about" class="w3-button w3-block w3-black">ABOUT</a>-->
     <!--</div>-->
-    <div class="w3-col s3">
-      <a href="#demo" class="w3-button w3-block w3-black">DEMO</a>
-    </div>
+
     <div class="w3-col s3">
       <a href="/contact" class="w3-button w3-block w3-black">CONTACT US</a>
     </div>
       {% if session['logged_in'] == True %}
-            <div class="w3-col s3">
-      <a href="/logout" class="w3-button w3-block w3-black">LOGOUT</a>
-    </div>
+         <div class="w3-col s3"> 
+         <a href="/profile" class="w3-button w3-block w3-black">PROFILE</a>
+         </div>
+         
+         <div class="w3-col s3"> 
+         <a href="/logout" class="w3-button w3-block w3-black">LOGOUT</a>
+         </div> 
 
       {% else %}
-    <div class="w3-col s3">
-      <a href="/login" class="w3-button w3-block w3-black">LOGIN/SIGN UP</a>
-    </div>
+          <div class="w3-col s3">
+          <a href="#demo" class="w3-button w3-block w3-black">DEMO</a>
+         </div>
+         <div class="w3-col s3">
+         <a href="/login" class="w3-button w3-block w3-black">LOGIN/SIGN UP</a>
+         </div>
       {% endif %}
 
     <!--<div class="w3-col s3">-->
@@ -162,7 +167,7 @@ body, html {
     <p><span class="w3-tag">Step 3</span> Results.</p>
 
 
-    <p><strong>More</strong></p>
+    <p><strong>Try it now</strong></p>
 
 
     <!--<form action="/action_page.php" target="_blank">-->
@@ -172,20 +177,37 @@ body, html {
       <!--<p><input class="w3-input w3-padding-16 w3-border" type="text" placeholder="Message \ Special requirements" required name="Message"></p>-->
       <!--<p><button class="w3-button w3-black" type="submit">START UPLOAD</button></p>-->
     <!--</form>-->
+
+
       <div class="w3-col s3">
+      
+
+
           {% if session['logged_in'] == True %}
-      <a href="/index" class="w3-button w3-block w3-black">START UPLOAD</a>
+
+      <p><a href="/index" class="w3-button w3-block w3-black">START UPLOAD</a></p>
+
+      <p><a href="/upgrade" class="w3-button w3-block w3-black">UPGRADE NOW</a></p>
+
+          
           {% else %}
-      <a href="/login" class="w3-button w3-block w3-black">START UPLOAD</a>
+
+      <p><a href="/login" class="w3-button w3-block w3-black">START UPLOAD</a></p>
+
+      <p><a href="/login" class="w3-button w3-block w3-black">UPGRADE NOW</a></p>
 
           {% endif %}
+      
+  
+      
+
       </div>
 
   </div>
 </div>
 
-<!-- End page content -->
-</div>
+
+
 
 
 
