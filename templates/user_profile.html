@@ -21,6 +21,12 @@
         <div class="w3-bar w3-black w3-padding w3-card" style="letter-spacing:4px;">
             <a href="/" class="w3-bar-item w3-button">Home</a>
     <!-- Right-sided navbar links. Hide them on small screens -->
+
+      <div class="w3-right w3-hide-small">
+      <!-- <a href="/home" class="w3-bar-item w3-button">Home</a>-->
+      <a href="/index" class="w3-bar-item w3-button">Upload</a>
+      </div>
+
             <div class="w3-right w3-hide-small">
       <!-- <a href="/home" class="w3-bar-item w3-button">Home</a>-->
             <a href="/logout" class="w3-bar-item w3-button">Logout</a>
@@ -83,6 +89,12 @@
 						Plan Expiration Date: {{plan_date}}
 					</span>
 					</li>
+						<li class="p-b-32">
+                    <!--<button class="w3-btn w3-round-large w3-border w3-border-grey" style = "font-size:15px">-->
+						<!--Upgrade -->
+					<!--</button>-->
+					 <a href="/index" class="w3-button w3-block w3-black">START UPLOAD</a>
+                    </li>
                     {% endif %}
 
 					

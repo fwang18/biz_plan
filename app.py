@@ -24,6 +24,8 @@ from werkzeug.security import generate_password_hash, \
 from flask_login import LoginManager, UserMixin, login_user,\
     login_required, logout_user, current_user
 from predict import ImagePredictor
+import datetime
+from datetime import timedelta
 
 
 app = Flask(__name__)
@@ -43,16 +45,6 @@ def contact():
     This function is to render CONTACT US HTML
     """
     return render_template('contact.html')
-
-
-@app.route("/profile")
-def profile():
-    """
-    This function is to render User Profile HTML
-    """
-    # Hard code for now. Need to revise once connecting to database.
-    return render_template('user_profile.html', name=current_user.username,
-                           email=current_user.email, plan=0, free=3)
 
 
 # This is the path to the upload directory
@@ -79,58 +71,21 @@ def index():
     jQuery is loaded to execute the request and update the
     value of the operation
     """
-    return render_template('dashboard_upload.html', name=current_user.username)
-
-
-@app.route('/upload', methods=['POST'])
-def upload():
-    """
-    This route will process the file upload
-    """
-    # Get the name of the uploaded files
-    uploaded_files = request.files.getlist("file[]")
-    filenames = []
-    if len(uploaded_files) > 5:
-        return render_template('dashboard_upload.html',
-                               name=current_user.username, error=1)
-
-    for file in uploaded_files:
-        # Check if the file is one of the allowed types/extensions
-        if file and allowed_file(file.filename):
-            # Make the filename safe, remove unsupported chars
-            filename = secure_filename(file.filename)
-            # Move the file form the temporal folder to the upload
-            # folder we setup
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            # Save the filename into a list, we'll use it later
-            filenames.append(os.path.join(app.config['UPLOAD_FOLDER'],
-                                          filename))
-        # Throw an error for images with improper extension.
-        if allowed_file(file.filename) is False:
-                return render_template('dashboard_upload.html',
-                                       name=current_user.username,
-                                       error=2, wrongfile=file.filename)
-    # Redirect the user to the uploaded_file route, which
-    # will basically show on the browser the uploaded file
-    # Show images in sorted order based on model results.
-    m = ImagePredictor('model/cnn_model.pt')
-    sorted_files = list(np.array(filenames)[m.rank(filenames)])
-    files = [f.split('/')[1] for f in sorted_files]
-    # Load an html page with a link to each uploaded file
-    return render_template('dashboard_results.html',
-                           filenames=sorted_files,
-                           name=current_user.username, files=files)
-
-
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    """
-    This route is expecting a parameter containing the name
-    of a file. Then it will locate that file on the upload
-    directory and show it on the browser, so if the user uploads
-    an image, that image is going to be show after the upload
-    """
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    # check user status
+    # List of status objects for a user
+    user_all_status = User.query.filter_by(username=current_user.username).first().status
+    # List of log objects for a user
+    user_all_log = User.query.filter_by(username=current_user.username).first().log
+    # Evaluation time in 30 days
+    count = len([(datetime.datetime.now() - log.log_ts) < datetime.timedelta(days=30)
+                 for log in user_all_log])
+    # For free users, check number of evaluation times.
+    if len(user_all_status) == 0 and count == 5:
+        messages = "You've reached 5 limit, please upgrade."
+        session['messages'] = messages
+        return redirect(url_for('upgrade'))
+    else:
+        return render_template('dashboard_upload.html', name=current_user.username)
 
 
 # This is to create user database
@@ -148,6 +103,26 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
+    # reference column for Payment class
+    status = db.relationship('Payment', backref='users')
+    # reference column for Logs class
+    log = db.relationship('Logs', backref='users')
+
+
+# Create user payment table into database
+class Payment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    person_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    status = db.Column(db.String(2))
+    pay_time = db.Column(db.DateTime)
+
+
+# Create user logs table into database
+class Logs(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    person_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    log_ts = db.Column(db.DateTime)
+    num_pic = db.Column(db.Integer)
 
 
 @login_manager.user_loader
@@ -212,7 +187,7 @@ def signup():
     form = RegisterForm()
     user_count = User.query.filter_by(username=form.username.data).count()
     # Throw warning message for existing users.
-    if (user_count > 0):
+    if user_count > 0:
         form = RegisterForm()
         return render_template('signup.html',
                                form=form,
@@ -230,28 +205,131 @@ def signup():
     return render_template('signup.html', form=form)
 
 
+@app.route('/upload', methods=['POST'])
+def upload():
+    """
+    This route will process the file upload
+    """
+    # Get the name of the uploaded files
+    uploaded_files = request.files.getlist("file[]")
+    filenames = []
+    if len(uploaded_files) > 5:
+        return render_template('dashboard_upload.html',
+                               name=current_user.username, error=1)
+
+    for file in uploaded_files:
+        # Check if the file is one of the allowed types/extensions
+        if file and allowed_file(file.filename):
+            # Make the filename safe, remove unsupported chars
+            filename = secure_filename(file.filename)
+            # Move the file form the temporal folder to the upload
+            # folder we setup
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            # Save the filename into a list, we'll use it later
+            filenames.append(os.path.join(app.config['UPLOAD_FOLDER'],
+                                          filename))
+        # Throw an error for images with improper extension.
+        if allowed_file(file.filename) is False:
+                return render_template('dashboard_upload.html',
+                                       name=current_user.username,
+                                       error=2, wrongfile=file.filename)
+    # Redirect the user to the uploaded_file route, which
+    # will basically show on the browser the uploaded file
+    # Show images in sorted order based on model results.
+    m = ImagePredictor('model/cnn_model.pt')
+    sorted_files = list(np.array(filenames)[m.rank(filenames)])
+    files = [f.split('/')[1] for f in sorted_files]
+    # Record users evaluation time in Logs table
+
+    user_s = User.query.filter_by(username=current_user.username).first()
+    if len(user_s.status) == 0:
+        user_log = Logs(log_ts=datetime.datetime.now(), num_pic=len(files), users=user_s)
+        db.session.add(user_log)
+        db.session.commit()
+
+    # Load an html page with a link to each uploaded file
+    return render_template('dashboard_results.html',
+                           filenames=sorted_files,
+                           name=current_user.username, files=files)
+
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    """
+    This route is expecting a parameter containing the name
+    of a file. Then it will locate that file on the upload
+    directory and show it on the browser, so if the user uploads
+    an image, that image is going to be show after the upload
+    """
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
 # Create user payment form.
 class PaymentForm(FlaskForm):
     name = StringField('Name', validators=[InputRequired()])
     credit_num = StringField('Credit card number',
-                             validators=[InputRequired(),
-                                         Length(min=16, max=16)])
+                             validators=[InputRequired()])
     exp_date = StringField('Expiration date',
-                           validators=[InputRequired(), Length(4)])
+                           validators=[InputRequired()])
     sec_code = StringField('Security code',
-                           validators=[InputRequired(), Length(3)])
+                           validators=[InputRequired()])
 
 
-@app.route("/upgrade")
+@app.route("/upgrade", methods=['GET', 'POST'])
 def upgrade():
     """
     This function is to render Upgrade HTML
     Allowing user to provide payment info
     """
     form = PaymentForm()
-    return render_template('upgrade.html',
-                           name=current_user.username,
-                           email=current_user.email, form=form)
+
+    if form.validate_on_submit():
+
+        user_s = User.query.filter_by(username=current_user.username).first()
+        user_pay = Payment(status=1, pay_time=datetime.datetime.now(), users=user_s)
+        db.session.add(user_pay)
+        db.session.commit()
+        return redirect(url_for('profile'))
+
+    # check user status
+    # List of status objects for a user
+    user_all_status = User.query.filter_by(username=current_user.username).first().status
+    # List of log objects for a user
+    user_all_log = User.query.filter_by(username=current_user.username).first().log
+    # Evaluation time in 30 days
+    count = len([(datetime.datetime.now() - log.log_ts) < datetime.timedelta(days=30)
+                 for log in user_all_log])
+    # For free users, check number of evaluation times.
+    if len(user_all_status) == 0 and count == 5:
+        return render_template('upgrade.html', form=form, error=1)
+    else:
+        return render_template('upgrade.html', form=form)
+
+@app.route("/profile")
+def profile():
+    """
+    This function is to render User Profile HTML
+    """
+    # check user status
+    user_all_status = User.query.filter_by(username=current_user.username).first().status
+    # Free user
+    if len(user_all_status) == 0:
+        recent_status = 0
+        user_all_log = User.query.filter_by(username=current_user.username).first().log
+        # Evaluation time in 30 days
+        count = len([(datetime.datetime.now() - log.log_ts) < datetime.timedelta(days=30)
+                     for log in user_all_log])
+        free = 5-count
+        exp_date = -1
+    # Paid user
+    else:
+        recent_status = int(user_all_status[-1].status)
+        exp_date = (user_all_status[-1].pay_time + datetime.timedelta(days=30)).date()
+        free = -1
+
+    return render_template('user_profile.html', name=current_user.username,
+                           email=current_user.email, plan=recent_status,
+                           plan_date=exp_date, free=free)
 
 
 @app.route('/logout')
