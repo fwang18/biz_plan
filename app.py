@@ -299,7 +299,7 @@ def upgrade():
         user_pay = Payment(status=1, pay_time=datetime.datetime.now(), users=user_s)
         db.session.add(user_pay)
         db.session.commit()
-        return redirect(url_for('profile'))
+        return redirect(url_for('upgrade_landing'))
 
     # check user status
     # List of status objects for a user
