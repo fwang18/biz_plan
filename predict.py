@@ -35,7 +35,7 @@ class ImagePredictor(object):
 
 	def load_image(self, image_path):
 	    """load image, returns tensor"""
-	    image = Image.open(image_path)
+	    image = Image.open(image_path).convert('RGB')
 	    image = self.transform(image).float()
 	    image = Variable(image, requires_grad=True)
 	    image = image.unsqueeze(0)  #this is for VGG, may not be needed for ResNet
