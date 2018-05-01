@@ -200,9 +200,19 @@ def signup():
                         email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
-        return redirect(url_for('login'))
+        return redirect(url_for('signup_landing')) ###test
 
     return render_template('signup.html', form=form)
+
+
+@app.route('/signup_landing')
+def signup_landing():
+    return render_template('signup_landing.html')
+
+
+@app.route('/upgrade_landing')
+def upgrade_landing():
+    return render_template('upgrade_landing.html')
 
 
 @app.route('/upload', methods=['POST'])
@@ -304,6 +314,7 @@ def upgrade():
         return render_template('upgrade.html', form=form, error=1)
     else:
         return render_template('upgrade.html', form=form)
+
 
 @app.route("/profile")
 def profile():
