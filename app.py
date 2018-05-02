@@ -252,7 +252,7 @@ def upload():
     # Redirect the user to the uploaded_file route, which
     # will basically show on the browser the uploaded file
     # Show images in sorted order based on model results.
-    m = ImagePredictor('model/cnn_model.pt')
+    m = ImagePredictor('trained_models')
     sorted_files = list(np.array(filenames)[m.rank(filenames)])
     files = [f.split('/')[1] for f in sorted_files]
     # Record users evaluation time in Logs table
