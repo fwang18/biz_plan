@@ -25,7 +25,6 @@ from flask_login import LoginManager, UserMixin, login_user,\
     login_required, logout_user, current_user
 from predict import ImagePredictor
 import datetime
-from datetime import timedelta
 
 
 app = Flask(__name__)
@@ -62,30 +61,6 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower()\
            in app.config['ALLOWED_EXTENSIONS']
-
-
-@app.route('/index')
-def index():
-    """
-    This route will show a form to perform an AJAX request
-    jQuery is loaded to execute the request and update the
-    value of the operation
-    """
-    # check user status
-    # List of status objects for a user
-    user_all_status = User.query.filter_by(username=current_user.username).first().status
-    # List of log objects for a user
-    user_all_log = User.query.filter_by(username=current_user.username).first().log
-    # Evaluation time in 30 days
-    count = len([(datetime.datetime.now() - log.log_ts) < datetime.timedelta(days=30)
-                 for log in user_all_log])
-    # For free users, check number of evaluation times.
-    if len(user_all_status) == 0 and count == 5:
-        messages = "You've reached 5 limit, please upgrade."
-        session['messages'] = messages
-        return redirect(url_for('upgrade'))
-    else:
-        return render_template('dashboard_upload.html', name=current_user.username)
 
 
 # This is to create user database
@@ -154,6 +129,30 @@ class RegisterForm(FlaskForm):
         Length(min=8, max=80)])
 
 
+@app.route('/index')
+def index():
+    """
+    This route will show a form to perform an AJAX request
+    jQuery is loaded to execute the request and update the
+    value of the operation
+    """
+    # check user status
+    # List of status objects for a user
+    user_all_status = User.query.filter_by(username=current_user.username).first().status
+    # List of log objects for a user
+    user_all_log = User.query.filter_by(username=current_user.username).first().log
+    # Evaluation time in 30 days
+    count = len([(datetime.datetime.now() - log.log_ts) < datetime.timedelta(days=30)
+                 for log in user_all_log])
+    # For free users, check number of evaluation times.
+    if len(user_all_status) == 0 and count == 5:
+        messages = "You've reached 5 limit, please upgrade."
+        session['messages'] = messages
+        return redirect(url_for('upgrade'))
+    else:
+        return render_template('dashboard_upload.html', name=current_user.username)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """
@@ -186,12 +185,19 @@ def signup():
     """
     form = RegisterForm()
     user_count = User.query.filter_by(username=form.username.data).count()
+    user_email_count = User.query.filter_by(email=form.email.data).count()
+
     # Throw warning message for existing users.
     if user_count > 0:
         form = RegisterForm()
         return render_template('signup.html',
                                form=form,
                                message="Username Already Exist")
+    elif user_email_count > 0:
+        form = RegisterForm()
+        return render_template('signup.html',
+                               form=form,
+                               message2="Email Already Exist")
     # Create sign up form for uses to fill.
     elif form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data,
@@ -200,7 +206,7 @@ def signup():
                         email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
-        return redirect(url_for('signup_landing')) ###test
+        return redirect(url_for('signup_landing'))
 
     return render_template('signup.html', form=form)
 
