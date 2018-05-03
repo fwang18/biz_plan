@@ -138,11 +138,14 @@ def index():
     """
     # check user status
     # List of status objects for a user
-    user_all_status = User.query.filter_by(username=current_user.username).first().status
+    user_all_status = User.query.filter_by(username=current_user.username)\
+        .first().status
     # List of log objects for a user
-    user_all_log = User.query.filter_by(username=current_user.username).first().log
+    user_all_log = User.query.filter_by(username=current_user.username)\
+        .first().log
     # Evaluation time in 30 days
-    count = len([(datetime.datetime.now() - log.log_ts) < datetime.timedelta(days=30)
+    count = len([(datetime.datetime.now() - log.log_ts)
+                 < datetime.timedelta(days=30)
                  for log in user_all_log])
     # For free users, check number of evaluation times.
     if len(user_all_status) == 0 and count == 5:
@@ -150,7 +153,8 @@ def index():
         session['messages'] = messages
         return redirect(url_for('upgrade'))
     else:
-        return render_template('dashboard_upload.html', name=current_user.username)
+        return render_template('dashboard_upload.html',
+                               name=current_user.username)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -259,7 +263,8 @@ def upload():
 
     user_s = User.query.filter_by(username=current_user.username).first()
     if len(user_s.status) == 0:
-        user_log = Logs(log_ts=datetime.datetime.now(), num_pic=len(files), users=user_s)
+        user_log = Logs(log_ts=datetime.datetime.now(),
+                        num_pic=len(files), users=user_s)
         db.session.add(user_log)
         db.session.commit()
 
@@ -302,18 +307,22 @@ def upgrade():
     if form.validate_on_submit():
 
         user_s = User.query.filter_by(username=current_user.username).first()
-        user_pay = Payment(status=1, pay_time=datetime.datetime.now(), users=user_s)
+        user_pay = Payment(status=1, pay_time=datetime.datetime.now(),
+                           users=user_s)
         db.session.add(user_pay)
         db.session.commit()
         return redirect(url_for('upgrade_landing'))
 
     # check user status
     # List of status objects for a user
-    user_all_status = User.query.filter_by(username=current_user.username).first().status
+    user_all_status = User.query.filter_by(username=current_user.username)\
+        .first().status
     # List of log objects for a user
-    user_all_log = User.query.filter_by(username=current_user.username).first().log
+    user_all_log = User.query.filter_by(username=current_user.username)\
+        .first().log
     # Evaluation time in 30 days
-    count = len([(datetime.datetime.now() - log.log_ts) < datetime.timedelta(days=30)
+    count = len([(datetime.datetime.now() - log.log_ts)
+                 < datetime.timedelta(days=30)
                  for log in user_all_log])
     # For free users, check number of evaluation times.
     if len(user_all_status) == 0 and count == 5:
@@ -328,20 +337,24 @@ def profile():
     This function is to render User Profile HTML
     """
     # check user status
-    user_all_status = User.query.filter_by(username=current_user.username).first().status
+    user_all_status = User.query.filter_by(username=current_user.username)\
+        .first().status
     # Free user
     if len(user_all_status) == 0:
         recent_status = 0
-        user_all_log = User.query.filter_by(username=current_user.username).first().log
+        user_all_log = User.query.filter_by(username=current_user.username)\
+            .first().log
         # Evaluation time in 30 days
-        count = len([(datetime.datetime.now() - log.log_ts) < datetime.timedelta(days=30)
+        count = len([(datetime.datetime.now() - log.log_ts)
+                     < datetime.timedelta(days=30)
                      for log in user_all_log])
         free = 5-count
         exp_date = -1
     # Paid user
     else:
         recent_status = int(user_all_status[-1].status)
-        exp_date = (user_all_status[-1].pay_time + datetime.timedelta(days=30)).date()
+        exp_date = (user_all_status[-1].pay_time
+                    + datetime.timedelta(days=30)).date()
         free = -1
 
     return render_template('user_profile.html', name=current_user.username,
