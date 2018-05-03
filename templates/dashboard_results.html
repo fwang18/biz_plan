@@ -14,6 +14,17 @@
 <title>Picturesue.ai</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+ <!-- You can use Open Graph tags to customize link previews.
+    Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
+  <meta property="og:url"           content="http://54.218.179.9:8080/" />
+  <meta property="og:type"          content="website" />
+  <meta property="og:title"         content="PICTURESQUE.AI" />
+  <meta property="og:description"   content="Your description" />
+  <!--<meta property="og:image" content="http://54.218.179.9:8080/static/test.jpg">-->
+  <meta property="og:image" content="{{url_for('uploaded_file', filename='053_flickr.jpeg')}}">
+<!-- End Open Graph tags-->
+
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <style>
@@ -70,9 +81,41 @@ h1,h2,h3,h4,h5,h6 {
         {% endfor %}
         </div>
       </ul>
+
+          <!-----Facebook button----->
+
+    <div class="fb-like" data-href="http://54.218.179.9:8080/" data-layout="button" data-action="like" data-size="large" data-show-faces="true" data-share="true"></div>
+
+          <!--div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count" data-size="large" data-mobile-iframe="true"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div-->
+    <!-----End Facebook button ----->
+
+          <!--Pinterest button -->
+          <a data-pin-do="buttonBookmark" data-pin-tall="true" href="https://www.pinterest.com/pin/create/button/"></a>
+          <!--End Pinterest button -->
       </div>
       </hr>
     </div>
 
 
 
+
+  <!-----Facebook button javascript----->
+
+    <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+    <!-----End Facebook button javascript----->
+
+<!--Pinterest button javascript-->
+<!--https://developers.pinterest.com/tools/widget-builder/?type=pinit&tall=true&round=false-->
+<script async defer src="//assets.pinterest.com/js/pinit.js"></script>
+
+<!--End Pinterest button javascript-->
+</body>
+</html>
